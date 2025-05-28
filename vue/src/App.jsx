@@ -1,35 +1,49 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// unihub-novo/src/App.jsx
+import { useState } from 'react';
+import { initialUserData } from './data/initialUserData';
+import Header from './components/layout/Header';
+import BottomNavigationBar from './components/layout/BottomNavigationBar';
+import HomePage from './pages/HomePage';
+import CalendarPage from './pages/CalendarPage';
+import SubjectsPage from './pages/SubjectsPage';
+import AssignmentsPage from './pages/AssignmentsPage';
+import AddQuickEntryModal from './components/common/AddQuickEntryModal';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [userData, setUserData] = useState(initialUserData);
+  const [activePage, setActivePage] = useState('home');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const renderActivePage = () => {
+    switch (activePage) {
+      case 'home':
+        return <HomePage userData={userData} />;
+      case 'calendar':
+        return <CalendarPage eventos={userData.eventosCalendario} />;
+      case 'subjects':
+        return <SubjectsPage materias={userData.materiasSemestre} />;
+      case 'assignments':
+        return <AssignmentsPage trabalhos={userData.trabalhosPendentes} />;
+      default:
+        return <HomePage userData={userData} />;
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 flex flex-col">
+      <Header userData={userData} />
+      <main className="max-w-7xl mx-auto w-full p-4 sm:p-6 lg:p-8 flex-grow pb-24">
+        {renderActivePage()}
+      </main>
+      <BottomNavigationBar
+        activePage={activePage}
+        setActivePage={setActivePage}
+        onAddClick={() => setIsAddModalOpen(true)}
+      />
+      <AddQuickEntryModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
+    </div>
+  );
 }
-
-export default App
