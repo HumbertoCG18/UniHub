@@ -12,7 +12,10 @@ const CalendarPage = ({ eventos }) => {
   const [currentDate, setCurrentDate] = useState(new Date(2025, 4, 1)); // Maio é 4
 
   const filteredEvents = useMemo(() => {
-    if (!eventos) return [];
+    // VERIFICAÇÃO ADICIONADA:
+    if (!Array.isArray(eventos)) {
+        return []; // Retorna array vazio se eventos não estiver pronto ou não for um array
+    }
     return eventos
       .filter(evento => showClasses || evento.type !== 'aula')
       .filter(evento =>
@@ -29,10 +32,11 @@ const CalendarPage = ({ eventos }) => {
     });
   };
 
+  // VERIFICAÇÃO ADICIONADA (para o caso da prop 'eventos' ser totalmente nula/indefinida inicialmente)
   if (!eventos) {
     return (
         <div className="p-4 sm:p-6 bg-white rounded-xl shadow-lg">
-            <p>Carregando eventos...</p>
+            <p className="text-center text-slate-500 py-4">Carregando eventos...</p>
         </div>
     );
   }
@@ -57,6 +61,7 @@ const CalendarPage = ({ eventos }) => {
           />
       </div>
 
+      {/* Os componentes abaixo agora têm suas próprias verificações internas para 'events' */}
       {currentView === 'list' && <ListView events={filteredEvents} />}
       {currentView === 'month' && <MonthView currentDate={currentDate} events={filteredEvents} />}
       {currentView === 'week' && <WeekView currentDate={currentDate} events={filteredEvents} numWeeks={1} />}

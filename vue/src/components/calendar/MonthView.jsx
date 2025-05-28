@@ -2,10 +2,16 @@
 import { getDaysInMonth, getFirstDayOfMonth, getDayNames } from '../../utils/dateUtils';
 
 const MonthView = ({ currentDate, events }) => {
+  // VERIFICAÇÃO ADICIONADA:
+  if (!Array.isArray(events)) {
+    // console.error("MonthView: 'events' prop não é um array ou está indefinido.", events);
+    return <p className="text-center text-slate-500 py-4">Carregando eventos...</p>;
+  }
+
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const numDays = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month); // 0 = Domingo
+  const firstDay = getFirstDayOfMonth(year, month);
   const today = new Date();
   const dayNames = getDayNames('pt-BR', 'short');
 
@@ -19,6 +25,7 @@ const MonthView = ({ currentDate, events }) => {
   for (let day = 1; day <= numDays; day++) {
     const date = new Date(year, month, day);
     const isToday = date.toDateString() === today.toDateString();
+    // A verificação de 'events' já foi feita, então .filter aqui é seguro
     const dayEvents = events.filter(e => new Date(e.date).toDateString() === date.toDateString());
 
     days.push(

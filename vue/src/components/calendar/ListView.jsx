@@ -2,6 +2,11 @@
 import EventItem from './EventItem';
 
 const ListView = ({ events }) => {
+  // VERIFICAÇÃO ADICIONADA:
+  if (!Array.isArray(events)) {
+    return <p className="text-center text-slate-500 py-4">Carregando eventos ou nenhum evento para exibir.</p>;
+  }
+
   const sortedEvents = [...events].sort((a,b) => new Date(a.date) - new Date(b.date));
 
   return (

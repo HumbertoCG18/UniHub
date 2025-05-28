@@ -2,16 +2,22 @@
 import EventItem from './EventItem';
 
 const WeekView = ({ currentDate, events, numWeeks = 1 }) => {
+  // VERIFICAÇÃO ADICIONADA:
+  if (!Array.isArray(events)) {
+    // console.error("WeekView: 'events' prop não é um array ou está indefinido.", events);
+    return <p className="text-center text-slate-500 py-4">Carregando eventos ou nenhum evento para este período.</p>;
+  }
+
   const startDate = new Date(currentDate);
   startDate.setDate(startDate.getDate() - startDate.getDay());
 
   const endDate = new Date(startDate);
   endDate.setDate(startDate.getDate() + (numWeeks * 7) - 1);
 
-  const weekEvents = events
+  const weekEvents = events // Agora é mais seguro chamar .filter e .sort
     .filter(event => {
         const eventDate = new Date(event.date);
-        eventDate.setHours(0,0,0,0);
+        eventDate.setHours(0,0,0,0); // Normaliza para comparar apenas a data
         return eventDate >= startDate && eventDate <= endDate;
     })
     .sort((a,b) => new Date(a.date) - new Date(b.date));
