@@ -1,6 +1,7 @@
 /* unihub-novo/src/index.css */
 @import "tailwindcss";
 @tailwind base;
+@tailwind components;
 @tailwind utilities;
 
         .custom-scrollbar::-webkit-scrollbar { width: 8px; }
