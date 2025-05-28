@@ -1,11 +1,11 @@
 // unihub-novo/src/components/layout/BottomNavigationBar.jsx
-import { Home, CalendarDays, BookCopy, ClipboardList, PlusCircle } from 'lucide-react';
+import { Home, CalendarDays, BookCopy, ClipboardList, PlusCircle, X } from 'lucide-react'; // Adicionado X
 
-const BottomNavigationBar = ({ activePage, setActivePage, onAddClick }) => {
+const BottomNavigationBar = ({ activePage, setActivePage, onAddClick, isAddFormOpen }) => {
     const navItems = [
         { id: 'home', icon: Home, label: 'Início' },
         { id: 'calendar', icon: CalendarDays, label: 'Calendário' },
-        { id: 'add', icon: PlusCircle, label: 'Add', isCentral: true },
+        { id: 'add', icon: isAddFormOpen ? X : PlusCircle, label: 'Add', isCentral: true }, // Ícone dinâmico
         { id: 'subjects', icon: BookCopy, label: 'Matérias' },
         { id: 'assignments', icon: ClipboardList, label: 'Trabalhos' },
     ];
@@ -18,11 +18,18 @@ const BottomNavigationBar = ({ activePage, setActivePage, onAddClick }) => {
                         return (
                              <button
                                 key={item.id}
-                                onClick={onAddClick}
-                                className="flex flex-col items-center justify-center p-2 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition-all transform hover:scale-110 -mt-4 w-14 h-14 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50"
-                                aria-label="Adicionar nova entrada"
+                                onClick={onAddClick} // Usa a função passada pelo App.jsx
+                                className={`
+                                    flex flex-col items-center justify-center p-1 rounded-full 
+                                    text-white shadow-lg hover:bg-blue-700 
+                                    transition-all duration-300 ease-in-out
+                                    focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50
+                                    w-14 h-14 -mt-4 
+                                    ${isAddFormOpen ? 'bg-red-500 hover:bg-red-600 rotate-90' : 'bg-blue-600 hover:bg-blue-700'}
+                                `}
+                                aria-label={isAddFormOpen ? "Fechar formulário" : "Adicionar nova entrada"}
                             >
-                                <item.icon size={28} />
+                                <item.icon size={isAddFormOpen ? 24 : 28} className="transition-transform duration-300" />
                             </button>
                         );
                     }
@@ -32,6 +39,7 @@ const BottomNavigationBar = ({ activePage, setActivePage, onAddClick }) => {
                             onClick={() => setActivePage(item.id)}
                             className={`flex flex-col items-center justify-center p-2 rounded-lg w-1/5 ${activePage === item.id ? 'text-blue-600' : 'text-slate-500 hover:text-blue-500'} transition-colors`}
                             aria-current={activePage === item.id ? "page" : undefined}
+                            disabled={isAddFormOpen} // Desabilita outros botões quando o formulário está aberto
                         >
                             <item.icon size={24} />
                             <span className="text-xs mt-0.5">{item.label}</span>
