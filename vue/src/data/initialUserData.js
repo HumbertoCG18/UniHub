@@ -29,7 +29,34 @@ export const initialUserData = {
     { id: 'ev5', title: 'Aula Cálculo Vetorial', date: '2025-05-28', type: 'aula', subject: 'Cálculo Vetorial Avançado', time: '14:00', cor: 'bg-blue-500'},
   ],
   materiasSemestre: [
-    { id: 'm1', nome: 'Cálculo Vetorial Avançado', professor: 'Prof. Dr. Elara Vance', progressoAtividades: 75, progressoConteudo: 60, faltas: 2, limiteFaltas: 10, presenca: 80, cor: 'bg-blue-500' },
+  {
+    id: 'm1',
+    nome: 'Cálculo Vetorial Avançado',
+    codigo: 'MAT302', // Novo: Código da matéria
+    professor: 'Prof. Dr. Elara Vance',
+    emailProfessor: 'elara.vance@universidade.edu', // Novo: Email do professor
+    diasSemana: ['Ter', 'Qui'], // Novo: Dias da semana (ex: ['Seg', 'Qua'])
+    horario: '14:00 - 15:40', // Horário (já existente ou pode ser mais detalhado)
+    progressoAtividades: 75, // Já existente
+    progressoConteudo: 60, // Já existente
+    faltas: 2, // Já existente
+    limiteFaltas: 10, // Já existente
+    cor: 'bg-blue-500', // Já existente, usado para o calendário
+    notas: [ // Já existente, usado na ProfilePage
+      { tipo: 'P1', valor: 7.5, peso: 0.3, data: '2025-04-10' },
+      { tipo: 'P2', valor: 8.0, peso: 0.3, data: '2025-06-05' },
+      { tipo: 'Trabalho 1', valor: 9.0, peso: 0.2, data: '2025-03-20' },
+      { tipo: 'Trabalho 2', valor: 7.0, peso: 0.2, data: '2025-05-15' }
+    ],
+    presenca: 90, // Já existente (taxa de presença da matéria)
+    trabalhosStatus: { enviados: 2, pendentes: 1, total: 3 }, // Novo: Status dos trabalhos
+    arquivos: [ // Novo: Arquivos upados pelo professor
+      { id: 'arq1', nome: 'Plano de Ensino.pdf', url: '/files/plano_ensino_mat302.pdf', dataUpload: '2025-02-15' },
+      { id: 'arq2', nome: 'Lista Exercícios 1.docx', url: '/files/lista_exercicios1_mat302.docx', dataUpload: '2025-03-01' },
+      { id: 'arq3', nome: 'Notas Aula - Vetores.pptx', url: '/files/aula_vetores.pptx', dataUpload: '2025-03-10' }
+    ],
+    tags: ['Exatas', 'Cálculo Avançado'] // Novo: Tags (para ideia futura)
+  },
     { id: 'm2', nome: 'Física Quântica I', professor: 'Prof. Max Planck', progressoAtividades: 90, progressoConteudo: 80, faltas: 1, limiteFaltas: 12, presenca: 90, cor: 'bg-red-500' },
   ],
   trabalhosPendentes: [

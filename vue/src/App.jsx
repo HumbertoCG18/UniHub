@@ -30,6 +30,16 @@ export default function App() {
     });
   };
 
+    const handleUpdateMateria = (updatedMateria) => {
+    setUserData(prevUserData => ({
+      ...prevUserData,
+      materiasSemestre: prevUserData.materiasSemestre.map(m => 
+        m.id === updatedMateria.id ? updatedMateria : m
+      )
+    }));
+    console.log("Matéria atualizada no App:", updatedMateria);
+  };
+
   useEffect(() => {
     const root = window.document.documentElement;
     const currentMode = userData.aparencia?.modo || 'claro';
@@ -44,7 +54,7 @@ export default function App() {
     switch (activePage) {
       case 'home': return <HomePage userData={userData} />;
       case 'calendar': return <CalendarPage eventos={userData.eventosCalendario} />;
-      case 'subjects': return <SubjectsPage materias={userData.materiasSemestre} />;
+      case 'subjects':return <SubjectsPage materias={userData.materiasSemestre} onUpdateMateria={handleUpdateMateria} />;
       case 'assignments': return <AssignmentsPage trabalhos={userData.trabalhosPendentes} />;
       case 'profile': return <ProfilePage userData={userData} onUpdateUserData={handleUpdateUserData} />;
       case 'settings': return <SettingsPage userData={userData} onUpdateUserData={handleUpdateUserData} />;
