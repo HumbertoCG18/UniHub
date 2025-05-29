@@ -29,11 +29,27 @@ export const initialUserData = {
     { id: 'ev5', title: 'Aula Cálculo Vetorial', date: '2025-05-28', type: 'aula', subject: 'Cálculo Vetorial Avançado', time: '14:00', cor: 'bg-blue-500'},
   ],
   materiasSemestre: [
-    { id: 'm1', nome: 'Cálculo Vetorial Avançado', professor: 'Prof. Dr. Elara Vance', progressoAtividades: 75, progressoConteudo: 60, faltas: 2, limiteFaltas: 10, cor: 'bg-blue-500' },
-    { id: 'm2', nome: 'Física Quântica I', professor: 'Prof. Max Planck', progressoAtividades: 90, progressoConteudo: 80, faltas: 1, limiteFaltas: 12, cor: 'bg-red-500' },
+    { id: 'm1', nome: 'Cálculo Vetorial Avançado', professor: 'Prof. Dr. Elara Vance', progressoAtividades: 75, progressoConteudo: 60, faltas: 2, limiteFaltas: 10, presenca: 80, cor: 'bg-blue-500' },
+    { id: 'm2', nome: 'Física Quântica I', professor: 'Prof. Max Planck', progressoAtividades: 90, progressoConteudo: 80, faltas: 1, limiteFaltas: 12, presenca: 90, cor: 'bg-red-500' },
   ],
   trabalhosPendentes: [
     { id: 't1', nome: 'Projeto IA - Fase 2', materia: 'Inteligência Artificial', dataEntrega: '2025-06-05', diasRestantes: 8 },
     { id: 't2', nome: 'Lista Exercícios Termodinâmica', materia: 'Física II', dataEntrega: '2025-06-12', diasRestantes: 15 },
-  ]
+  ],
+  servicosConectados: [
+    { id: 'office365', nome: 'Office 365', conectado: true, logoUrl: '/path/to/office365-logo.png' },
+    { id: 'notion', nome: 'Notion', conectado: false, logoUrl: '/path/to/notion-logo.png' },
+    { id: 'moodle', nome: 'Moodle Institucional', conectado: true, logoUrl: '/path/to/moodle-logo.png' },
+    { id: 'onenote', nome: 'One Note', conectado: true, logoUrl: '/path/to/onenote.png' },
+    { id: 'github', nome: 'GitHub', conectado: false, logoUrl: '/path/to/github.png' },
+    { id: 'google', nome: 'Google', conectado: true, logoUrl: '/path/to/google' },
+  ],
+  assinatura: {
+  plano: 'Gratuito', // ou 'Premium', 'Pro'
+  dataExpiracao: null, // ou uma data
+  },
+  assinatura: {
+  plano: 'Gratuito', // ou 'Premium', 'Pro'
+  dataExpiracao: null, // ou uma data
+}  
 };
