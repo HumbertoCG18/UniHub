@@ -78,5 +78,44 @@ export const initialUserData = {
   assinatura: {
   plano: 'Gratuito', // ou 'Premium', 'Pro'
   dataExpiracao: null, // ou uma data
-}  
+  },
+  trabalhosPendentes: [
+  {
+    id: 't1',
+    nome: 'Projeto IA - Fase 2',
+    materia: 'Inteligência Artificial',
+    dataPostagem: '2025-05-20', // Novo: Data que o trabalho foi postado
+    tipo: 'online', // Novo: 'online' ou 'presencial'
+    dataEntrega: '2025-06-05', // Data final de entrega
+    // 'diasRestantes' pode ser calculado dinamicamente, mas manteremos por simplicidade no mock
+    diasRestantes: (new Date('2025-06-05') - new Date()) / (1000 * 60 * 60 * 24) > 0 ? Math.ceil((new Date('2025-06-05') - new Date()) / (1000 * 60 * 60 * 24)) : 0,
+    linkEntrega: 'https://moodle.universidade.edu/trabalho/ia_fase2', // Novo: Link para a sala de entrega (se online)
+    alertaDefinido: false, // Novo: Para controlar se um alerta já foi definido
+    corMateria: 'bg-purple-500' // Opcional: Cor da matéria para o card
+  },
+  {
+    id: 't2',
+    nome: 'Apresentação Seminário - Cap. 3',
+    materia: 'Sociologia Aplicada',
+    dataPostagem: '2025-05-15',
+    tipo: 'presencial',
+    dataEntrega: '2025-06-12',
+    diasRestantes: (new Date('2025-06-12') - new Date()) / (1000 * 60 * 60 * 24) > 0 ? Math.ceil((new Date('2025-06-12') - new Date()) / (1000 * 60 * 60 * 24)) : 0,
+    localApresentacao: 'Sala C105', // Novo: Para trabalhos presenciais
+    alertaDefinido: true,
+    corMateria: 'bg-teal-500'
+  },
+  {
+    id: 't3',
+    nome: 'Lista Exercícios Termodinâmica',
+    materia: 'Física II',
+    dataPostagem: '2025-05-25',
+    tipo: 'online',
+    dataEntrega: '2025-06-10',
+    diasRestantes: (new Date('2025-06-10') - new Date()) / (1000 * 60 * 60 * 24) > 0 ? Math.ceil((new Date('2025-06-10') - new Date()) / (1000 * 60 * 60 * 24)) : 0,
+    linkEntrega: 'https://moodle.universidade.edu/trabalho/fisica_lista3',
+    alertaDefinido: false,
+    corMateria: 'bg-orange-500'
+    }
+  ],
 };
