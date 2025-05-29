@@ -1,6 +1,5 @@
-// unihub-novo/src/components/subjects/EditSubjectModal.jsx
 import { useState, useEffect } from 'react';
-import Modal from '../common/Modal'; // Importa o Modal genérico
+import Modal from './Modal'; // Importa o Modal genérico
 import { Palette, Tag, Save } from 'lucide-react';
 
 const EditSubjectModal = ({ materia, isOpen, onClose, onSave }) => {
