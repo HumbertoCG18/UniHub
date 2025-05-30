@@ -20,10 +20,10 @@ const CalendarViewControls = ({
   return (
     <>
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-2xl font-bold text-slate-800">Calendário Acadêmico</h2>
+        <h2 className="text-2xl font-bold text-slate-800 text-white">Calendário Acadêmico</h2>
         <div className="flex items-center space-x-2">
           <button onClick={() => changeMonth(-1)} className="p-2 rounded-md hover:bg-slate-100 transition-colors" aria-label="Mês anterior"><ChevronLeft size={20}/></button>
-          <span className="text-lg font-semibold text-slate-700 w-32 text-center">
+          <span className="text-lg font-semibold text-slate-700 w-32 text-center text-white">
             {currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
           </span>
           <button onClick={() => changeMonth(1)} className="p-2 rounded-md hover:bg-slate-100 transition-colors" aria-label="Próximo mês"><ChevronRight size={20}/></button>
@@ -43,7 +43,7 @@ const CalendarViewControls = ({
           ))}
         </div>
         <div className="flex items-center space-x-3">
-          <label htmlFor="showClassesToggle" className="text-sm text-slate-600 flex items-center cursor-pointer">
+          <label htmlFor="showClassesToggle" className="text-sm text-slate-600 flex items-center cursor-pointer text-white">
             {showClasses ? <Eye size={18} className="mr-1.5 text-blue-500"/> : <EyeOff size={18} className="mr-1.5 text-slate-400"/>}
             Mostrar Aulas
           </label>

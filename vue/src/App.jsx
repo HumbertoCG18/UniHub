@@ -1,5 +1,5 @@
 // unihub-novo/src/App.jsx
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 
 // Dados
 import { initialUserData } from './data/initialUserData';
@@ -19,22 +19,43 @@ import SettingsPage from './pages/SettingsPage';
 // Componentes Comuns (Formulário Expansível)
 import ExpandingAddForm from './components/common/ExpandingAddForm';
 
+// 1. Criar o Contexto e EXPORTÁ-LO
+export const AppContext = createContext();
+
+// Hook customizado para usar o AppContext (já estava exportado corretamente)
+export const useAppContext = () => {
+  return useContext(AppContext);
+};
+
 export default function App() {
-  const [userData, setUserData] = useState(initialUserData);
+  const [userData, setUserData] = useState(() => {
+    const savedData = localStorage.getItem('uniHubUserData');
+    try {
+      return savedData ? JSON.parse(savedData) : initialUserData;
+    } catch (error) {
+      console.error("Erro ao parsear userData do localStorage:", error);
+      return initialUserData;
+    }
+  });
   const [activePage, setActivePage] = useState('home');
   const [isAddFormVisible, setIsAddFormVisible] = useState(false);
 
+  useEffect(() => {
+    localStorage.setItem('uniHubUserData', JSON.stringify(userData));
+  }, [userData]);
+
   const handleUpdateUserData = (newUserDataPartial) => {
     setUserData(prevUserData => {
-      const updatedData = {
-        ...prevUserData,
-        ...newUserDataPartial,
-        aparencia: {
-          ...prevUserData.aparencia,
-          ...(newUserDataPartial.aparencia || {}),
-        },
-      };
-      // console.log("Dados do usuário atualizados no App:", updatedData);
+      const updatedData = typeof newUserDataPartial === 'function'
+        ? newUserDataPartial(prevUserData)
+        : {
+            ...prevUserData,
+            ...newUserDataPartial,
+            aparencia: {
+              ...(prevUserData.aparencia || {}),
+              ...(newUserDataPartial.aparencia || {}),
+            },
+          };
       return updatedData;
     });
   };
@@ -46,19 +67,16 @@ export default function App() {
         m.id === updatedMateria.id ? updatedMateria : m
       )
     }));
-    // console.log("Matéria atualizada no App:", updatedMateria);
   };
 
-   const handleUpdateTrabalho = (updatedTrabalho) => { // Adicionada da sua solicitação anterior
+   const handleUpdateTrabalho = (updatedTrabalho) => {
     setUserData(prevUserData => ({
       ...prevUserData,
       trabalhosPendentes: prevUserData.trabalhosPendentes.map(t =>
         t.id === updatedTrabalho.id ? updatedTrabalho : t
       )
     }));
-    // console.log("Trabalho atualizado no App:", updatedTrabalho);
   };
-
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -66,29 +84,48 @@ export default function App() {
 
     if (currentMode === 'escuro') {
       root.classList.add('dark');
+      localStorage.setItem('themeMode', 'escuro');
     } else {
       root.classList.remove('dark');
+      localStorage.setItem('themeMode', 'claro');
     }
   }, [userData.aparencia?.modo]);
+
+  useEffect(() => {
+    const savedMode = localStorage.getItem('themeMode');
+    const initialUserMode = userData.aparencia?.modo;
+
+    if (savedMode && savedMode !== initialUserMode) {
+        handleUpdateUserData(prev => ({
+            ...prev,
+            aparencia: { ...(prev.aparencia || {}), modo: savedMode }
+        }));
+    } else if (!savedMode && !initialUserMode) { // Se nenhum modo salvo e nenhum modo no userData
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) {
+             handleUpdateUserData(prev => ({
+                ...prev,
+                aparencia: { ...(prev.aparencia || {}), modo: 'escuro' }
+            }));
+        }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Roda apenas na montagem
 
   const renderActivePage = () => {
     switch (activePage) {
       case 'home':
-        return <HomePage userData={userData} />;
+        return <HomePage />; // Pode usar useAppContext internamente se precisar
       case 'calendar':
-        if (!Array.isArray(userData.eventosCalendario)) {
-          console.error("App.jsx: userData.eventosCalendario não é um array!", userData.eventosCalendario);
-          return <div className="p-6 text-center text-red-500">Erro ao carregar dados do calendário.</div>;
-        }
-        return <CalendarPage eventos={userData.eventosCalendario} />;
+        return <CalendarPage />; // Usará useAppContext internamente
       case 'subjects':
         return <SubjectsPage materias={userData.materiasSemestre} onUpdateMateria={handleUpdateMateria} />;
       case 'assignments':
         return <AssignmentsPage trabalhos={userData.trabalhosPendentes} onUpdateTrabalho={handleUpdateTrabalho} />;
       case 'profile':
-        return <ProfilePage userData={userData} onUpdateUserData={handleUpdateUserData} setActivePage={setActivePage} />;
+        return <ProfilePage />; // Pode usar useAppContext internamente
       case 'settings':
-        return <SettingsPage userData={userData} onUpdateUserData={handleUpdateUserData} />;
+        return <SettingsPage />; // Pode usar useAppContext internamente
       case 'statistics':
         return <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg"><h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Estatísticas (Em Breve)</h1></div>;
       case 'plans':
@@ -96,7 +133,7 @@ export default function App() {
       default:
         console.warn(`Página desconhecida: ${activePage}. Redirecionando para Home.`);
         setActivePage('home');
-        return <HomePage userData={userData} />;
+        return <HomePage />;
     }
   };
 
@@ -105,33 +142,32 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200 flex flex-col relative`}>
-      <Header
-        userData={userData}
-        setActivePage={setActivePage}
-      />
-      <main 
-        className={`
-          max-w-7xl mx-auto w-full 
-          p-3 sm:p-4 md:p-6 lg:p-8
-          flex-grow 
-          pb-32 /* ALTERADO AQUI: Aumentado o padding-bottom para dar mais espaço */
-          transition-opacity duration-300 
-          ${isAddFormVisible ? 'opacity-50 blur-sm pointer-events-none dark:opacity-30' : 'opacity-100'}
-        `}
-      >
-        {renderActivePage()}
-      </main>
-      <BottomNavigationBar
-        activePage={activePage}
-        setActivePage={setActivePage}
-        onAddClick={toggleAddForm}
-        isAddFormOpen={isAddFormVisible}
-      />
-      <ExpandingAddForm
-        isVisible={isAddFormVisible}
-        onClose={toggleAddForm}
-      />
-    </div>
+    <AppContext.Provider value={{ userData, setUserData: handleUpdateUserData, activePage, setActivePage }}>
+      <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200 flex flex-col relative`}>
+        <Header />
+        <main
+          className={`
+            max-w-7xl mx-auto w-full
+            p-3 sm:p-4 md:p-6 lg:p-8
+            flex-grow
+            pb-32
+            transition-opacity duration-300
+            ${isAddFormVisible ? 'opacity-50 blur-sm pointer-events-none dark:opacity-30' : 'opacity-100'}
+          `}
+        >
+          {renderActivePage()}
+        </main>
+        <BottomNavigationBar
+          activePage={activePage}
+          setActivePage={setActivePage}
+          onAddClick={toggleAddForm}
+          isAddFormOpen={isAddFormVisible}
+        />
+        <ExpandingAddForm
+          isVisible={isAddFormVisible}
+          onClose={toggleAddForm}
+        />
+      </div>
+    </AppContext.Provider>
   );
 }

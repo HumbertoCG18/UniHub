@@ -1,15 +1,20 @@
 // unihub-novo/src/pages/HomePage.jsx
+import React from 'react';
 import { CalendarDays, TrendingUp, Target } from 'lucide-react';
 import NextClassCard from '../components/home/NextClassCard';
 import AulaItem from '../components/home/AulaItem';
 import StatCard from '../components/common/StatCard';
 import { formatDataInicio } from '../utils/dateUtils';
+import { useAppContext } from '../App'; // Importe o hook do contexto
 
-const HomePage = ({ userData }) => {
-    if (!userData) {
+const HomePage = () => {
+    const { userData } = useAppContext(); // Use o hook para obter userData
+
+    // Verificação mais robusta: userData deve existir e ter propriedades esperadas (ex: nome)
+    if (!userData || !userData.nome) {
         return (
-            <div className="flex justify-center items-center h-full">
-                <p className="dark:text-slate-300">Carregando dados do usuário...</p>
+            <div className="flex justify-center items-center h-screen"> {/* Use h-screen para ocupar a altura da tela */}
+                <p className="text-slate-600 dark:text-slate-300 text-lg">Carregando dados do usuário...</p>
             </div>
         );
     }
@@ -33,8 +38,8 @@ const HomePage = ({ userData }) => {
                                         aula={aula}
                                         isProxima={
                                             userData.proximaAula &&
-                                            aula.materia === userData.proximaAula.materia &&
-                                            aula.horario === userData.proximaAula.horario
+                                            userData.proximaAula.materia === aula.materia && // Corrigido para comparar a matéria
+                                            userData.proximaAula.horario === aula.horario
                                         }
                                     />
                                 ))}
@@ -60,8 +65,8 @@ const HomePage = ({ userData }) => {
                     <StatCard
                         icon={Target}
                         title="Progresso do Curso"
-                        value="45%" // Dado mockado
-                        subtitle="3º Semestre de 8" // Dado mockado
+                        value={userData.progressoCurso || "45%"} // Usar dado do userData se existir, senão mock
+                        subtitle={userData.semestreCurso || "3º Semestre de 8"} // Usar dado do userData se existir, senão mock
                         colorClass="text-orange-500 dark:text-orange-400"
                     />
                 </div>
