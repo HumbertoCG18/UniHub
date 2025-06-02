@@ -1,5 +1,8 @@
 // unihub-novo/src/App.jsx
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect } from 'react'; // Removido createContext e useContext daqui
+
+// Importe AppContext do novo arquivo
+import { AppContext } from './components/context/AppContext';// Ajuste o caminho se o AppContext estiver em outro lugar
 
 // Dados
 import { initialUserData } from './data/initialUserData'; //
@@ -16,16 +19,11 @@ import AssignmentsPage from './pages/AssignmentsPage'; //
 import ProfilePage from './pages/ProfilePage'; //
 import SettingsPage from './pages/SettingsPage'; //
 
-// Componentes Comuns (Formulário Expansível)
+// Componentes Comuns
 import ExpandingAddForm from './components/common/ExpandingAddForm'; //
 
-// 1. Criar o Contexto e EXPORTÁ-LO
-export const AppContext = createContext(); //
-
-// Hook customizado para usar o AppContext
-export const useAppContext = () => { //
-  return useContext(AppContext);
-};
+// O hook useAppContext agora será importado pelos componentes que o utilizam, do novo arquivo.
+// EXPORTAÇÃO DE useAppContext REMOVIDA DAQUI
 
 export default function App() {
   const [userData, setUserData] = useState(() => {
@@ -80,7 +78,7 @@ export default function App() {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    const currentMode = userData.aparencia?.modo || 'claro'; //
+    const currentMode = userData?.aparencia?.modo || 'claro'; // Adicionado optional chaining
 
     if (currentMode === 'escuro') {
       root.classList.add('dark');
@@ -89,11 +87,11 @@ export default function App() {
       root.classList.remove('dark');
       localStorage.setItem('themeMode', 'claro'); //
     }
-  }, [userData.aparencia?.modo]); //
+  }, [userData?.aparencia?.modo]); // Adicionado optional chaining
 
   useEffect(() => {
     const savedMode = localStorage.getItem('themeMode');
-    const initialUserMode = userData.aparencia?.modo;
+    const initialUserMode = userData?.aparencia?.modo; // Adicionado optional chaining
 
     if (savedMode && savedMode !== initialUserMode) { //
         handleUpdateUserData(prev => ({
@@ -110,7 +108,7 @@ export default function App() {
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Roda apenas na montagem //
+  }, []);
 
   const renderActivePage = () => { //
     switch (activePage) {
@@ -119,14 +117,13 @@ export default function App() {
       case 'calendar':
         return <CalendarPage />; //
       case 'subjects':
-        return <SubjectsPage materias={userData.materiasSemestre} onUpdateMateria={handleUpdateMateria} />; //
+        return <SubjectsPage materias={userData?.materiasSemestre} onUpdateMateria={handleUpdateMateria} />; // Adicionado optional chaining
       case 'assignments':
-        return <AssignmentsPage trabalhos={userData.trabalhosPendentes} onUpdateTrabalho={handleUpdateTrabalho} />; //
+        return <AssignmentsPage trabalhos={userData?.trabalhosPendentes} onUpdateTrabalho={handleUpdateTrabalho} />; // Adicionado optional chaining
       case 'profile':
-        return <ProfilePage />; //
+        return <ProfilePage />; // ProfilePage usa useAppContext internamente
       case 'settings':
-        // Pass userData and onUpdateUserData to SettingsPage
-        return <SettingsPage userData={userData} onUpdateUserData={handleUpdateUserData} />; //
+        return <SettingsPage userData={userData} onUpdateUserData={handleUpdateUserData} />; // Mantém props por enquanto
       case 'statistics':
         return <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg"><h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Estatísticas (Em Breve)</h1></div>; //
       case 'plans':
@@ -145,14 +142,13 @@ export default function App() {
   return (
     <AppContext.Provider value={{ userData, setUserData: handleUpdateUserData, activePage, setActivePage }}>
       <div className={`min-h-screen bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200 flex flex-col relative`}>
-        {/* Header no longer needs props for userData or setActivePage as it uses context */}
         <Header />
         <main
           className={`
             max-w-7xl mx-auto w-full
             p-3 sm:p-4 md:p-6 lg:p-8
             flex-grow
-            pb-32
+            pb-32 
             transition-opacity duration-300
             ${isAddFormVisible ? 'opacity-50 blur-sm pointer-events-none dark:opacity-30' : 'opacity-100'}
           `}

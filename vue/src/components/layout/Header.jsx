@@ -1,7 +1,7 @@
 // unihub-novo/src/components/layout/Header.jsx
 import { useState, useEffect, useRef } from 'react';
 import { BookOpen, Bell, UserCircle, Settings, BarChart3, CreditCard, LogOut, ChevronDown } from 'lucide-react';
-import { useAppContext } from '../../App'; // Import useAppContext
+import { useAppContext } from '../context/AppContext';// Ajuste o caminho se o AppContext estiver em outro lugar
 
 const Header = () => { // Removed userData and setActivePage from props
   const { userData, setActivePage } = useAppContext(); // Get userData and setActivePage from context

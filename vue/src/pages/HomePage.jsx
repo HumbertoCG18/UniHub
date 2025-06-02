@@ -5,7 +5,7 @@ import NextClassCard from '../components/home/NextClassCard';
 import AulaItem from '../components/home/AulaItem';
 import StatCard from '../components/common/StatCard';
 import { formatDataInicio } from '../utils/dateUtils';
-import { useAppContext } from '../App'; // Importe o hook do contexto
+import { useAppContext } from '../components/context/AppContext';// Ajuste o caminho se o AppContext estiver em outro lugar
 
 const HomePage = () => {
     const { userData } = useAppContext(); // Use o hook para obter userData

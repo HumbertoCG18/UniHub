@@ -4,7 +4,7 @@ import CalendarViewControls from '../components/calendar/CalendarViewControls';
 import ListView from '../components/calendar/ListView';
 import MonthView from '../components/calendar/MonthView';
 import WeekView from '../components/calendar/WeekView';
-import { useAppContext } from '../App'; // Ajuste o caminho se o AppContext estiver em outro lugar
+import { useAppContext } from '../components/context/AppContext';// Ajuste o caminho se o AppContext estiver em outro lugar
 import AddQuickEntryModal from '../components/modals/AddQuickEntryModal';
 import EventDetailModal from '../components/modals/EventDetailModal';
 
