@@ -8,9 +8,10 @@ coverage/
 # production
 build/
 dist/
+api/
+services/
 dist-ssr
 *.local
-
 
 # misc
 .DS_Store
