@@ -1,15 +1,16 @@
 // unihub-novo/src/pages/SettingsPage.jsx
 import { useState, useEffect } from 'react';
 import {
-    Globe, Link2, CreditCard, Save, Bug, RefreshCw, Mail, UserCircle,
-    SlidersHorizontal, Palette
+    Globe, Link2, CreditCard, Save, Bug, RefreshCw, UserCircle,
+    SlidersHorizontal, Palette // Mail foi removido dos imports principais se não for mais usado diretamente aqui
 } from 'lucide-react';
 
+// Componentes de configuração importados
 import ApparenceSettingsComponent from '../components/settings/ApparenceSettings';
-// Importe o AccountSettingsComponent do seu novo local
-import AccountSettingsComponent from '../components/settings/AccountSettings';
+// AccountSettingsComponent NÃO é mais importado aqui para edição,
+// pois essa funcionalidade foi movida para ProfilePage.
 
-// --- Subcomponentes (LanguageSettings, ConnectionSettings, etc. como você já os tem) ---
+// --- Subcomponentes Internos da SettingsPage (mantidos como você os tinha) ---
 
 const SectionWrapper = ({ title, icon, children, description }) => {
   const IconComponent = icon;
@@ -100,79 +101,46 @@ const SubscriptionManagement = ({ plano }) => ( //
 );
 // --- Fim dos Subcomponentes ---
 
-const SettingsPage = ({ userData: initialUserDataProp, onUpdateUserData }) => {
+const SettingsPage = ({ userData: initialUserDataProp, onUpdateUserData, setActivePage }) => {
   const [localSettings, setLocalSettings] = useState(initialUserDataProp || {});
-  const [newProfilePhotoFile, setNewProfilePhotoFile] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
+    // Sincroniza localSettings se initialUserDataProp mudar
+    // (ex: App.jsx recarregou userData do localStorage ou initialUserData.js)
     if (initialUserDataProp) {
-        // Atualiza localSettings se a prop mudar, mas preserva edições locais não salvas
-        // Se fotoUrl externa mudou E não temos um newProfilePhotoFile (ou seja, não estamos editando foto)
-        // então atualiza localSettings.fotoUrl.
-        // Para outros campos, podemos usar uma abordagem de merge mais simples ou confiar
-        // que initialUserDataProp é a fonte da verdade para campos não editados.
         setLocalSettings(prevLocalSettings => {
-            const newSettings = {...initialUserDataProp}; // Começa com os dados mais recentes do prop
-            // Mantém edições locais que não foram sobrescritas pelo prop
-            if (prevLocalSettings.email !== initialUserDataProp.email) newSettings.email = prevLocalSettings.email;
-            // Similar para outros campos se você tiver edição mais granular
-            // Para aparencia, é um objeto, então merge com cuidado
-            newSettings.aparencia = {
-                ...(initialUserDataProp.aparencia || {}),
-                ...(prevLocalSettings.aparencia || {}),
-            };
-            if (newProfilePhotoFile) {
-                // Se estivermos no meio de uma edição de foto, não sobrescreva fotoUrl com a do prop
-                newSettings.fotoUrl = prevLocalSettings.fotoUrl;
+            // Faz um merge inteligente para preservar edições locais não salvas se a estrutura base mudar
+            const updatedSettings = { ...initialUserDataProp, ...prevLocalSettings };
+            if (initialUserDataProp.aparencia && prevLocalSettings.aparencia) {
+                updatedSettings.aparencia = { ...initialUserDataProp.aparencia, ...prevLocalSettings.aparencia };
+                if (initialUserDataProp.aparencia.tagColors && prevLocalSettings.aparencia.tagColors) {
+                    updatedSettings.aparencia.tagColors = { ...initialUserDataProp.aparencia.tagColors, ...prevLocalSettings.aparencia.tagColors };
+                }
             }
-             return newSettings;
+            // Adicione lógicas de merge similares para outros objetos aninhados se necessário
+            return updatedSettings;
         });
     }
   }, [initialUserDataProp]);
 
-
+  // Handlers para Preferências Gerais (Idioma, Aparência)
   const handleLanguageChange = (newLanguage) => setLocalSettings(prev => ({ ...prev, idiomaPreferido: newLanguage }));
   const handleVisualModeChange = (newMode) => setLocalSettings(prev => ({ ...prev, aparencia: { ...(prev?.aparencia || {}), modo: newMode } }));
   const handleDateFormatChange = (newFormat) => setLocalSettings(prev => ({ ...prev, aparencia: { ...(prev?.aparencia || {}), formatoData: newFormat } }));
   const handleTagColorChange = (tagKey, newColor) => setLocalSettings(prev => ({ ...prev, aparencia: { ...(prev?.aparencia || {}), tagColors: { ...(prev?.aparencia?.tagColors || {}), [tagKey]: newColor }}}));
-  const handleEmailChange = (newEmail) => setLocalSettings(prev => ({ ...prev, email: newEmail }));
+  
+  // Handlers para outras seções
   const handleToggleServiceConnect = (serviceId) => setLocalSettings(prev => ({ ...prev, servicosConectados: (prev?.servicosConectados || []).map(s => s.id === serviceId ? { ...s, conectado: !s.conectado } : s)}));
   const handleToggleBackup = () => setLocalSettings(prev => ({ ...prev, backupAtivado: !prev.backupAtivado }));
 
-  const handleNewPhotoSelected = (photoFile) => {
-    setNewProfilePhotoFile(photoFile);
-    // O preview é gerenciado internamente pelo AccountSettingsComponent.
-    // Se SettingsPage precisasse mostrar o preview também, você poderia
-    // atualizar localSettings.fotoUrl com URL.createObjectURL(photoFile) aqui,
-    // mas lembre-se de revogar o object URL antigo no useEffect cleanup ou antes de criar um novo.
-  };
+  // handleEmailChange e handleNewPhotoSelected foram removidos daqui
 
   const handleSaveChanges = async () => {
     if (onUpdateUserData && !isSaving) {
         setIsSaving(true);
-        let settingsToUpdate = { ...localSettings };
-
-        if (newProfilePhotoFile) {
-            console.log("PROCESSANDO 'UPLOAD' DE FOTO:", newProfilePhotoFile.name);
-            try {
-                await new Promise(resolve => setTimeout(resolve, 1500)); // Simula delay
-
-                const simulatedFileName = `user-profile-photo.${newProfilePhotoFile.name.split('.').pop()}`; // Ex: user-profile-photo.png
-                const newStaticPhotoUrl = `./data/img/pfp/${simulatedFileName}`; // Caminho relativo à pasta public
-
-                console.log(`Simulação: Nova fotoUrl definida como: '${newStaticPhotoUrl}'`);
-                console.warn(`Lembrete Desenvolvedor: Para esta simulação de foto funcionar visualmente, coloque uma imagem como '${simulatedFileName}' dentro da pasta 'public/img/pfp/' do seu projeto Vite.`);
-
-                settingsToUpdate.fotoUrl = newStaticPhotoUrl;
-                setNewProfilePhotoFile(null);
-            } catch (error) {
-                console.error("Simulação: Erro no 'upload' da foto:", error);
-                alert("Houve um erro ao tentar 'salvar' a nova foto. A foto anterior será mantida.");
-            }
-        }
-        
-        onUpdateUserData(settingsToUpdate);
+        // A lógica de processamento de newProfilePhotoFile foi removida daqui
+        onUpdateUserData(localSettings); // Passa apenas as configurações que esta página gerencia
         setIsSaving(false);
         alert("Configurações salvas!");
     }
@@ -190,13 +158,10 @@ const SettingsPage = ({ userData: initialUserDataProp, onUpdateUserData }) => {
           onClick={handleSaveChanges}
           disabled={isSaving}
           className={`w-full sm:w-auto font-bold py-2.5 px-5 rounded-lg shadow-md transition-colors flex items-center justify-center
-            ${isSaving 
-              ? 'bg-gray-400 text-gray-800 cursor-not-allowed' 
-              : 'bg-green-500 hover:bg-green-600 text-white'
-            }`}
+            ${isSaving ? 'bg-gray-400 text-gray-800 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'}`}
         >
           <Save size={18} className="mr-2" />
-          {isSaving ? "Salvando..." : "Salvar Todas as Configurações"}
+          {isSaving ? "Salvando..." : "Salvar Configurações"}
         </button>
       </div>
 
@@ -217,14 +182,25 @@ const SettingsPage = ({ userData: initialUserDataProp, onUpdateUserData }) => {
         </div>
       </SectionWrapper>
 
-      <SectionWrapper title="Conta" icon={UserCircle} description="Gerencie as informações da sua conta e foto de perfil.">
-        {/* Removida a definição local de AccountSettings, usamos o componente importado */}
-        <AccountSettingsComponent
-            currentEmail={localSettings.email ?? ''}
-            currentPhotoUrl={localSettings.fotoUrl ?? ''} // Passa a fotoUrl de localSettings
-            onEmailChange={handleEmailChange}
-            onNewPhotoSelected={handleNewPhotoSelected}   // Passa o handler da foto
-        />
+      <SectionWrapper title="Conta" icon={UserCircle} description="Informações básicas da sua conta.">
+         <p className="text-sm text-slate-600 dark:text-slate-400 mt-4">
+            Seu email registrado: <span className="font-medium">{localSettings.email ?? 'Não informado'}</span>
+        </p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Para editar seu email ou foto de perfil, acesse a <button
+                onClick={() => {
+                    if (setActivePage) { // Verifica se setActivePage foi passado como prop
+                        setActivePage('profile');
+                    } else {
+                        console.warn("SettingsPage: setActivePage não está disponível para navegar para o perfil. Considere passar como prop ou usar contexto.");
+                        alert("Navegação para Perfil não configurada nesta página. Vá manualmente.");
+                    }
+                }}
+                className="text-blue-600 hover:underline dark:text-blue-400 font-medium"
+            >
+                Página de Perfil
+            </button>.
+        </p>
       </SectionWrapper>
 
       <SectionWrapper title="Conexões de Serviços" icon={Link2} description="Conecte o UniHub com outros serviços que você usa.">
