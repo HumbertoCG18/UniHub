@@ -8,7 +8,7 @@ export const initialUserData = {
   progressoCurso: "45%", // Adicionado, usado na HomePage
   semestreCurso: "3º Semestre de 8", // Adicionado, usado na HomePage
   curso: "Engenharia de Software",
-  uni: "Universidade Federal de Hubs (UFHubs)",
+  universidade: "Universidade Federal de Hubs (UFHubs)",
   semestreAtual: "3º Semestre", // Mais específico para o perfil
   anoLetivo: "2025/1",
   dataPrevistaFormatura: "2027-07-15",
@@ -123,10 +123,19 @@ export const initialUserData = {
     dataExpiracao: null, // ou uma data
   },
   backupAtivado: true, // Adicionado, usado em SettingsPage
-  aparencia: { // Adicionado, usado em SettingsPage
-      modo: 'claro', // 'claro' ou 'escuro'
-      formatoData: 'DD/MM/YYYY' // 'DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'
-  },
+aparencia: {
+  modo: 'claro',
+  formatoData: 'DD/MM/YYYY',
+  tagColors: { // NOVO
+    aula: '#45B7D1',     // Azul claro (exemplo)
+    prova: '#FF6B6B',    // Vermelho claro (exemplo)
+    trabalho: '#4ECDC4',  // Verde água (exemplo)
+    evento: '#FEC868',   // Amarelo/Laranja claro (exemplo)
+    reuniao: '#778beb',  // Roxo azulado claro (exemplo)
+    lembrete: '#f7a36c', // Laranja pêssego (exemplo)
+    // Adicione outros tipos de evento padrão que você usa
+  }
+},
   idiomaPreferido: 'pt-BR', // Adicionado, usado em SettingsPage
 
   // --- Novos campos para "Vitrine de Habilidades" ---
