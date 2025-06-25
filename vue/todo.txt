@@ -1,0 +1,7 @@
+Página de contados de professor;
+Perfil de estudo do estudante; 
+Nas matérias, mostrar também a turma que o aluno está;
+Nas configurações, ter a opção de mostrar informações detalhadas sobre algumas coisas (código da matéria, horário na legenda dos periódos)
+Ter a possibilidade do usuário favoritar algum arquivo, evento, e etc, para que apareça na Home screen, dentro de um card chamado "Fixados"
+Ter uma lista que mostre: Provas realizadas, Trabalhos, etc. (Essa lista pode ser editavel, usando filtro para filtrar por tipo de avaliação, cadeira/matéria, e professor.) E com isso, ter a opção do usuário marcar se ele realizou a prova, ou se optou para fazer a prova subsituta, e se ele optar pela prova substituta, já marcar no calendário a data, e horário da prova. 
+Atribuição de datas automaticas de provas e Recuperação

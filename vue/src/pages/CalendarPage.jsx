@@ -168,7 +168,7 @@ const CalendarPage = () => {
           events={filteredEvents}
           onDayClick={handleDayClickInMonthView}
           // Se quiser que os eventos dentro das células do MonthView sejam clicáveis:
-          // onEventClick={handleOpenEventDetailModal} // e modificar MonthView para usar isso
+          onEventClick={handleOpenEventDetailModal} // e modificar MonthView para usar isso
         />
       )}
       {currentView === 'week' && (
